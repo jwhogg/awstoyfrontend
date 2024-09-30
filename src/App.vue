@@ -4,7 +4,7 @@
 
     <!-- Display the Todo List -->
     <ul>
-      <li v-for="(todo, index) in todos" :key="index">{{ todo.name }}</li>
+      <li v-for="(todo, index) in todos" :key="index">{{ todo.task }}</li>
     </ul>
 
     <!-- Form to Add a New Todo -->
@@ -32,8 +32,11 @@ export default {
     // Method to GET the list of todos using Axios
     async getTodos() {
       try {
-        const response = await axios.get('https://6lzzhlthsj.execute-api.eu-north-1.amazonaws.com/dev'); // Use your actual API URL
-        this.todos = response.data; // Assuming the response returns an array of todos
+        const response = await axios.get('https://6lzzhlthsj.execute-api.eu-north-1.amazonaws.com/dev');
+        // If the response body is a stringified JSON, parse it
+        const data = JSON.parse(response.data.body);
+
+        this.todos = data.items || [];  // Assuming the response structure is { "items": [...] }
       } catch (error) {
         console.error("Error fetching todos:", error);
       }
@@ -43,10 +46,14 @@ export default {
     async addTodo() {
       try {
         const response = await axios.post('https://6lzzhlthsj.execute-api.eu-north-1.amazonaws.com/dev', {
-          "name": this.newTodo
+          todo_item: this.newTodo   // Sending the new todo item in the expected format
+        }, {
+          headers: {
+            'Content-Type': 'application/json' // Ensure proper headers are sent
+          }
         });
 
-        if (response.status === 201) { // Assuming 201 status for successful creation
+        if (response.status === 200) { // Assuming 200 status for success (could be 201 if your API is set up that way)
           this.newTodo = '';  // Reset the input field
           this.getTodos();    // Fetch the updated todo list after adding a new one
         } else {

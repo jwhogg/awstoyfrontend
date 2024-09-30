@@ -32,7 +32,7 @@ export default {
     // Method to GET the list of todos using Axios
     async getTodos() {
       try {
-        const response = await axios.get('https://74063136-c526-45be-b1bc-1119af592b3c.mock.pstmn.io/demo'); // Use your actual API URL
+        const response = await axios.get('https://6lzzhlthsj.execute-api.eu-north-1.amazonaws.com/dev'); // Use your actual API URL
         this.todos = response.data; // Assuming the response returns an array of todos
       } catch (error) {
         console.error("Error fetching todos:", error);
@@ -42,7 +42,7 @@ export default {
     // Method to POST a new todo using Axios
     async addTodo() {
       try {
-        const response = await axios.post('https://74063136-c526-45be-b1bc-1119af592b3c.mock.pstmn.io/demo', {
+        const response = await axios.post('https://6lzzhlthsj.execute-api.eu-north-1.amazonaws.com/dev', {
           "name": this.newTodo
         });
 

@@ -1,30 +1,61 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div>
+    <h1>Todo List</h1>
+
+    <!-- Display the Todo List -->
+    <ul>
+      <li v-for="(todo, index) in todos" :key="index">{{ todo.name }}</li>
+    </ul>
+
+    <!-- Form to Add a New Todo -->
+    <h2>Add a new todo</h2>
+    <input v-model="newTodo" placeholder="Enter new todo" />
+    <button @click="addTodo">Submit</button>
+  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import axios from 'axios';
 
-nav {
-  padding: 30px;
-}
+export default {
+  data() {
+    return {
+      todos: [],     // Store the todo list
+      newTodo: ''    // Store the new todo to be added
+    };
+  },
+  mounted() {
+    // Fetch the most up-to-date todo list when the component is mounted
+    this.getTodos();
+  },
+  methods: {
+    // Method to GET the list of todos using Axios
+    async getTodos() {
+      try {
+        const response = await axios.get('https://74063136-c526-45be-b1bc-1119af592b3c.mock.pstmn.io/demo'); // Use your actual API URL
+        this.todos = response.data; // Assuming the response returns an array of todos
+      } catch (error) {
+        console.error("Error fetching todos:", error);
+      }
+    },
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    // Method to POST a new todo using Axios
+    async addTodo() {
+      try {
+        const response = await axios.post('https://74063136-c526-45be-b1bc-1119af592b3c.mock.pstmn.io/demo', {
+          "name": this.newTodo
+        });
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+        if (response.status === 201) { // Assuming 201 status for successful creation
+          this.newTodo = '';  // Reset the input field
+          this.getTodos();    // Fetch the updated todo list after adding a new one
+        } else {
+          console.error('Error adding todo:', response);
+        }
+      } catch (error) {
+        console.error('Error adding todo:', error);
+      }
+    }
+  }
+};
+</script>

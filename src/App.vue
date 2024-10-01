@@ -4,7 +4,12 @@
 
     <!-- Display the Todo List -->
     <ul>
-      <li v-for="(todo, index) in todos" :key="index">{{ todo.task }}</li>
+      <TodoItem
+        v-for="todo in todos"
+        :todo="todo"
+        :key="todo.id"
+        @todo-deleted="onTodoDeleted"
+      />
     </ul>
 
     <!-- Form to Add a New Todo -->
@@ -16,8 +21,12 @@
 
 <script>
 import axios from 'axios';
+import TodoItem from "./components/TodoItem.vue";
 
 export default {
+  components: {
+    TodoItem,
+  },
   data() {
     return {
       todos: [],     // Store the todo list
@@ -53,7 +62,6 @@ export default {
             'Content-Type': 'application/json'  // Ensure proper headers are sent
           }
         });
-
         if (response.status === 200) {  // Check for successful response
           this.newTodo = '';  // Reset the input field
           this.getTodos();    // Fetch the updated todo list after adding a new one
@@ -63,6 +71,10 @@ export default {
       } catch (error) {
         console.error('Error adding todo:', error);
       }
+    },
+
+    onTodoDeleted() {
+      this.getTodos();
     }
   }
 };
